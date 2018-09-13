@@ -21,7 +21,21 @@ app.use(express.static(publicPath));  // '/' path of URL is served up with conte
 // Below is an event listener based on connection created
 io.on('connection',(socket)=> {
 
-console.log('New connection established with client');
+  console.log('New connection established with client');
+
+  // Emit custom event on connection
+
+  socket.emit("newMessage",{
+    from:"John Petrucci",
+    text: "Keep at it, Anil. You will get there!",
+    createdAt: Date.now()
+  });
+
+socket.on('createMessage', (message)=> {
+message.createdAt = Date.now()
+console.log('New message has been sent in ', message);
+
+})
 
       socket.on('disconnect', (reason) => {
         console.log('Disconnected with reason of ',reason);
