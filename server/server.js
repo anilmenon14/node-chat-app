@@ -25,15 +25,16 @@ io.on('connection',(socket)=> {
 
   // Emit custom event on connection
 
-  socket.emit("newMessage",{
-    from:"John Petrucci",
-    text: "Keep at it, Anil. You will get there!",
-    createdAt: Date.now()
-  });
+  // socket.emit("newMessage",{
+  //   from:"John Petrucci",
+  //   text: "Keep at it, Anil. You will get there!",
+  //   createdAt: Date.now()
+  // });
 
 socket.on('createMessage', (message)=> {
-message.createdAt = Date.now()
+message.createdAt = new Date().getTime()
 console.log('New message has been sent in ', message);
+io.emit('newMessage',message) //io.emit is to broadcast to all connected sessions.
 
 })
 
