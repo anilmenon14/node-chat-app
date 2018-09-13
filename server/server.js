@@ -1,27 +1,40 @@
+// Inbuilt modules
 const path = require('path');
+const http = require ('http'); // http is required for socket integration
+
+// Installed modules
 const express = require('express');
+const socketIO = require('socket.io');
 
 const publicPath = path.join(__dirname + "/../public/");
 
 
 
 var app = express();
-
+var server = http.createServer(app); // Interesting fact: app.listen actually calls http.createServer as well. This is why in a normal non-socket app , it is not needed
+var io = socketIO(server);
 const port = process.env.PORT || 3000;
 
-//Option 1
 
 app.use(express.static(publicPath));  // '/' path of URL is served up with contents in the folder publicPath
 
+// Below is an event listener based on connection created
+io.on('connection',(socket)=> {
 
-//Option 2
-// app.get('/', (req,res) => {
-//
-// res.sendFile(publicPath + "index.html");
-//
-// });
+console.log('New connection established with client');
+
+      socket.on('disconnect', (reason) => {
+        console.log('Disconnected with reason of ',reason);
+      });
+});
 
 
-app.listen(port,() => {
+io.on('disconnection',(socket)=> {
+
+  console.log(' Disconnected from client');
+})
+
+server.listen(port,() => {
   console.log('Started on port ',port);
 });
+// app.listen and server.listen have the exact same params since http and express have been created close to each other
