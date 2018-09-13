@@ -1,0 +1,21 @@
+{
+  "name": "chat-app",
+  "version": "1.0.0",
+  "description": "Chat application",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "engines": {
+    "node": "9.8.0"
+    } ,
+  "keywords": [
+    "Chat"
+  ],
+  "author": "Anil Menon",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.14.0"
+  }
+}
