@@ -6,6 +6,9 @@ const http = require ('http'); // http is required for socket integration
 const express = require('express');
 const socketIO = require('socket.io');
 
+//imported modules created
+const {generateMessage} = require('./utils/message');
+
 const publicPath = path.join(__dirname + "/../public/");
 
 
@@ -31,25 +34,17 @@ io.on('connection',(socket)=> {
   //   createdAt: Date.now()
   // });
 
-socket.emit('newMessage',{
-   from : "Admin",
-   text : "Welcome to the group!"
+socket.emit('newMessage',generateMessage("Admin","Welcome to the group!"));
 
-});
-
-socket.broadcast.emit('newMessage',{
-   from : "Admin",
-   text : "New user has joined the group!"
-});
+socket.broadcast.emit('newMessage',generateMessage("Admin","New user has joined the group"));
 
 
 
 socket.on('createMessage', (message)=> {
-message.createdAt = new Date().getTime()
-console.log('New message has been sent in ', message);
+console.log('New message has been sent in ', generateMessage(message.from, message.text));
 
 //io.emit is to send to all connected sessions.
-io.emit('newMessage',message)
+io.emit('newMessage',generateMessage(message.from, message.text))
 
 //socket.broadcast.emit is used to send to everyone but the one who sent the original message (i.e. won't be sent to one who sent in the createMessage)
 // socket.broadcast.emit('newMessage',message);
