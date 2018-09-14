@@ -31,10 +31,28 @@ io.on('connection',(socket)=> {
   //   createdAt: Date.now()
   // });
 
+socket.emit('newMessage',{
+   from : "Admin",
+   text : "Welcome to the group!"
+
+});
+
+socket.broadcast.emit('newMessage',{
+   from : "Admin",
+   text : "New user has joined the group!"
+});
+
+
+
 socket.on('createMessage', (message)=> {
 message.createdAt = new Date().getTime()
 console.log('New message has been sent in ', message);
-io.emit('newMessage',message) //io.emit is to broadcast to all connected sessions.
+
+//io.emit is to send to all connected sessions.
+io.emit('newMessage',message)
+
+//socket.broadcast.emit is used to send to everyone but the one who sent the original message (i.e. won't be sent to one who sent in the createMessage)
+// socket.broadcast.emit('newMessage',message);
 
 })
 
