@@ -8,6 +8,8 @@ console.log('Connected to server');
 // socket.emit('createMessage',{
 //   from:"Anil Menon",
 //   text: "Thanks a lot , JP"
+// }, function(message) {
+//   console.log('message from server :',message);
 // })
 
 
@@ -24,4 +26,23 @@ socket.on('newMessage', function(message){
 // here 'message' is contents of 2nd argument of server side emit function
 console.log('New message has been received', message);
 
+var li = $('<li></li>');
+
+li.text(`${message.from} : ${message.text}`);
+
+$("#messages").append(li);
+
+});
+
+$("#message-form").on('submit', function(e) {
+
+e.preventDefault() ; //IMPORTANT step. This prevents the usual browser action to try and reload.
+console.log('Sending message......');
+
+socket.emit('createMessage',{
+  from:"Anil Menon",
+  text: $( "input" ).val()
+}, function(message) {
+  console.log('message from server :',message);
+})
 });

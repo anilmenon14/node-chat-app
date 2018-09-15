@@ -40,14 +40,16 @@ socket.broadcast.emit('newMessage',generateMessage("Admin","New user has joined 
 
 
 
-socket.on('createMessage', (message)=> {
+socket.on('createMessage', (message,callback)=> {
 console.log('New message has been sent in ', generateMessage(message.from, message.text));
 
 //io.emit is to send to all connected sessions.
 io.emit('newMessage',generateMessage(message.from, message.text))
 
+callback('Successfully received');
+
 //socket.broadcast.emit is used to send to everyone but the one who sent the original message (i.e. won't be sent to one who sent in the createMessage)
-// socket.broadcast.emit('newMessage',message);
+// socket.broadcast.emit('newMessage',generateMessage(message.from, message.text));
 
 })
 
