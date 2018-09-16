@@ -7,7 +7,7 @@ const express = require('express');
 const socketIO = require('socket.io');
 
 //imported modules created
-const {generateMessage} = require('./utils/message');
+const {generateMessage,generateLocationMessage} = require('./utils/message');
 
 const publicPath = path.join(__dirname + "/../public/");
 
@@ -36,22 +36,25 @@ io.on('connection',(socket)=> {
 
 socket.emit('newMessage',generateMessage("Admin","Welcome to the group!"));
 
+//socket.broadcast.emit is used to send to everyone but the one who sent the original message (i.e. won't be sent to one who sent in the newMessage)
 socket.broadcast.emit('newMessage',generateMessage("Admin","New user has joined the group"));
 
 
 
 socket.on('createMessage', (message,callback)=> {
 console.log('New message has been sent in ', generateMessage(message.from, message.text));
-
 //io.emit is to send to all connected sessions.
 io.emit('newMessage',generateMessage(message.from, message.text))
-
 callback('Successfully received');
+});
 
-//socket.broadcast.emit is used to send to everyone but the one who sent the original message (i.e. won't be sent to one who sent in the createMessage)
-// socket.broadcast.emit('newMessage',generateMessage(message.from, message.text));
+socket.on('createLocationMessage',(coords)=> {
 
-})
+io.emit('newLocationMessage',generateLocationMessage("User",coords.latitude ,coords.longitude));
+
+});
+
+
 
       socket.on('disconnect', (reason) => {
         console.log('Disconnected with reason of ',reason);
