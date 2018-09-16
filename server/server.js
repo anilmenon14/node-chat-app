@@ -48,10 +48,10 @@ io.emit('newMessage',generateMessage(message.from, message.text))
 callback('Successfully received');
 });
 
-socket.on('createLocationMessage',(coords)=> {
+socket.on('createLocationMessage',(coords,callback)=> {
 
 io.emit('newLocationMessage',generateLocationMessage("User",coords.latitude ,coords.longitude));
-
+callback('Successfully received');
 });
 
 
