@@ -25,18 +25,20 @@ socket.on('disconnect', function() {
 socket.on('newMessage', function(message){
 // here 'message' is contents of 2nd argument of server side emit function
 console.log('New message has been received', message);
+var formattedTime = moment(message.createdAt).format("h:mm a")
 var li = $('<li></li>');
-li.text(`${message.from} : ${message.text}`);
+li.text(`${message.from} ${formattedTime} : ${message.text}`);
 $("#messages").append(li);
 });
 
 socket.on('newLocationMessage', function(message){
 // here 'message' is contents of 2nd argument of server side emit function
 console.log('New message has been received', message);
+var formattedTime = moment(message.createdAt).format("h:mm a")
 var li = $('<li></li>');
 var a = $('<a target="_blank">Location link</a>')
 a.attr("href", `${message.url}`)
-li.text(`${message.from} : `);
+li.text(`${message.from} ${formattedTime} : `);
 li.append(a)
 $("#messages").append(li);
 });
