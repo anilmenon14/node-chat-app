@@ -23,24 +23,45 @@ socket.on('disconnect', function() {
 //Custom event defined in server.js
 
 socket.on('newMessage', function(message){
+  var template =  $("#message-template").html()
+  //Mustache.js is useful to help render a template (defined in the html ), it injects fields into the template as seen below
+  var html = Mustache.render(template, {
+    from: message.from,
+    text: message.text,
+    createdAt: moment(message.createdAt).format("h:mm a")
+  });
+
+  $("#messages").append(html);
+
 // here 'message' is contents of 2nd argument of server side emit function
-console.log('New message has been received', message);
-var formattedTime = moment(message.createdAt).format("h:mm a")
-var li = $('<li></li>');
-li.text(`${message.from} ${formattedTime} : ${message.text}`);
-$("#messages").append(li);
+// console.log('New message has been received', message);
+// var formattedTime = moment(message.createdAt).format("h:mm a")
+// var li = $('<li></li>');
+// li.text(`${message.from} ${formattedTime} : ${message.text}`);
+// $("#messages").append(li);
 });
 
 socket.on('newLocationMessage', function(message){
-// here 'message' is contents of 2nd argument of server side emit function
-console.log('New message has been received', message);
-var formattedTime = moment(message.createdAt).format("h:mm a")
-var li = $('<li></li>');
-var a = $('<a target="_blank">Location link</a>')
-a.attr("href", `${message.url}`)
-li.text(`${message.from} ${formattedTime} : `);
-li.append(a)
-$("#messages").append(li);
+// here 'message' is return of 2nd argument of server side emit function
+
+var template = $("#location-message-template").html();
+
+var html = Mustache.render(template,{
+  from: message.from,
+  url : message.url,
+  createdAt : moment(message.createdAt).format("h:mm a")
+});
+
+  $("#messages").append(html);
+
+// console.log('New message has been received', message);
+// var formattedTime = moment(message.createdAt).format("h:mm a")
+// var li = $('<li></li>');
+// var a = $('<a target="_blank">Location link</a>')
+// a.attr("href", `${message.url}`)
+// li.text(`${message.from} ${formattedTime} : `);
+// li.append(a)
+// $("#messages").append(li);
 });
 
 $("#message-form").on('submit', function(e) {
