@@ -1,6 +1,27 @@
 var socket = io(); // opening socket io connection
 // io() function is available to the HTML script since it is preloaded from the script tag just above i.e. socket.io.js
 
+// Scroll height function to scroll below to latest message IF AND ONLY IF user is already at the bottom
+// If user is not at the bottom, it will not scroll . This is a feature that allows users to read older messages without getting pulled to bottom if people are actively texting
+function  scrollToBottom() {
+// Selectors
+var messages = $('#messages');
+var newMessage = messages.children('li:last-child'); // This picks up the last item in the <li> , i.e. the last message we appeded just before calling this scrollToBottom function
+//Heights
+var clientHeight = messages.prop('clientHeight')
+var scrollTop = messages.prop('scrollTop')
+var scrollHeight = messages.prop('scrollHeight')
+var newMessageHeight = newMessage.innerHeight(); // Height of last message added
+var lastMessageHeight = newMessage.prev().innerHeight(); // Picked up <li> just before last one and found out height of that message too.
+
+if(clientHeight + scrollTop + newMessageHeight + lastMessageHeight >= scrollHeight) {
+  // console.log(`clientHeight:${clientHeight}, scrollTop:${scrollTop},newMessageHeight:${newMessageHeight},lastMessageHeight:${lastMessageHeight},scrollHeight:${scrollHeight}`);
+  // console.log('Should scroll');
+  messages.scrollTop(scrollHeight); // Moves postiom relatively for scrollTop to ensure that context is at the bottom of screen
+}
+}
+
+
 // Client side event based action
 socket.on('connect', function() {
 console.log('Connected to server');
@@ -32,6 +53,7 @@ socket.on('newMessage', function(message){
   });
 
   $("#messages").append(html);
+  scrollToBottom();
 
 // here 'message' is contents of 2nd argument of server side emit function
 // console.log('New message has been received', message);
@@ -53,6 +75,7 @@ var html = Mustache.render(template,{
 });
 
   $("#messages").append(html);
+  scrollToBottom();
 
 // console.log('New message has been received', message);
 // var formattedTime = moment(message.createdAt).format("h:mm a")
