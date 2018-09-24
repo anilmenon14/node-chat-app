@@ -26,13 +26,18 @@ if(clientHeight + scrollTop + newMessageHeight + lastMessageHeight >= scrollHeig
 socket.on('connect', function() {
 console.log('Connected to server');
 
-// socket.emit('createMessage',{
-//   from:"Anil Menon",
-//   text: "Thanks a lot , JP"
-// }, function(message) {
-//   console.log('message from server :',message);
-// })
+var params = $.deparam(window.location.search); // pull up the query that was passed from Join (index.html) to chat.html. This is a custom function that was included as script tag in chat.html
 
+socket.emit('join',params,function(err) {
+  if (err) {
+    alert(err);
+    window.location.href = "/";
+  }
+  else {
+    console.log('No errors seen');
+  };
+
+})
 
 });
 
@@ -87,10 +92,22 @@ var html = Mustache.render(template,{
 // $("#messages").append(li);
 });
 
+socket.on('updateRoomList',function(userList) {
+
+var ul = $('<ul></ul>')
+
+userList.forEach(function(user) {
+  ul.append($('<li></li>').text(user))
+})
+
+$("#users").html(ul);
+
+})
+
+
 $("#message-form").on('submit', function(e) {
 e.preventDefault() ; //IMPORTANT step. This prevents the usual browser action to try and reload.
 socket.emit('createMessage',{
-  from:"Anil Menon",
   text: $( "[name=message]" ).val() // targets the input text field
 }, function(message) {
   // console.log('message from server :',message);
