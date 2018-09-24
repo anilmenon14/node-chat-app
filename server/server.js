@@ -9,7 +9,7 @@ const socketIO = require('socket.io');
 //imported modules created
 const {generateMessage,generateLocationMessage} = require('./utils/message');
 const {Users} = require('./utils/users');
-const {isValidJoin} = require('./utils/validator')
+const {isValidJoin,isRealString} = require('./utils/validator')
 const publicPath = path.join(__dirname + "/../public/");
 
 
@@ -53,14 +53,18 @@ return callback("Invalid name or room have been passed. Please try again")
 socket.on('createMessage', (message,callback)=> {
 //console.log('New message has been sent in ', generateMessage(userList.getUser(socket.id).name, message.text));
 //io.emit is to send to all connected sessions.
-io.emit('newMessage',generateMessage(userList.getUser(socket.id).name, message.text))
+if ( userList.getUser(socket.id) && isRealString(message.text)) {
+io.to(userList.getUser(socket.id).room).emit('newMessage',generateMessage(userList.getUser(socket.id).name, message.text))
 callback('Successfully received');
+}
 });
 
 socket.on('createLocationMessage',(coords,callback)=> {
 
-io.emit('newLocationMessage',generateLocationMessage(userList.getUser(socket.id).name,coords.latitude ,coords.longitude));
+if ( userList.getUser(socket.id) ) {
+io.to(userList.getUser(socket.id).room).emit('newLocationMessage',generateLocationMessage(userList.getUser(socket.id).name,coords.latitude ,coords.longitude));
 callback('Successfully received');
+}
 });
 
 
